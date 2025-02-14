@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PC ESPAÇO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYEk3CIUnr2q2H-UExyv5QsZw73b6DYiI",
+            authDomain: "email-9c7a8.firebaseapp.com",
+            projectId: "email-9c7a8",
+            storageBucket: "email-9c7a8.appspot.com",
+            messagingSenderId: "34832357611",
+            appId: "1:34832357611:web:54c4bd95fd4e29ec71c6ae"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+
+        window.login = function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            if (!email || !password) {
+                errorMessage.textContent = "Preencha todos os campos!";
+                return;
+            }
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    console.log("Login bem-sucedido!");
+                    window.location.href = "https://pcespaco.github.io/site/";
+                })
+                .catch((error) => {
+                    console.error("Erro ao logar: ", error.message);
+                    errorMessage.textContent = error.message;
+                });
+        }
+
+        window.signup = function() {
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const signupError = document.getElementById('signup-error-message');
+
+            if (!email || !password) {
+                signupError.textContent = "Preencha todos os campos!";
+                return;
+            }
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    console.log("Cadastro realizado!");
+                    alert("Usuário cadastrado com sucesso!");
+                    showLoginForm();
+                })
+                .catch((error) => {
+                    console.error("Erro ao cadastrar: ", error.message);
+                    signupError.textContent = error.message;
+                });
+        }
+
+        window.showLoginForm = function() {
+            document.getElementById('signup-container').style.display = 'none';
+            document.getElementById('login-container').style.display = 'block';
+        }
+
+        window.showSignupForm = function() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('signup-container').style.display = 'block';
+        }
+
+        // Adiciona suporte para a tecla "Enter"
+        document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    if (document.getElementById('login-container').style.display !== 'none') {
+                        login();
+                    } else {
+                        signup();
+                    }
+                }
+            });
+        });
+
+    </script>
+
+    <style>
+        body {
+            background: radial-gradient(circle, #1A2A6C, #000428);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 30px;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #FF6F00;
+            margin-bottom: 15px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .input-field:focus {
+            border-color: #FF6F00;
+            outline: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #FF6F00;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #e65c00;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .switch-link {
+            color: #FF6F00;
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            margin-top: 15px;
+        }
+
+        .switch-link:hover {
+            text-decoration: underline;
+        }
+
+        .fadeIn {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN -->
+    <div id="login-container" class="container fadeIn">
+        <h2>Login</h2>
+        <input class="input-field" type="email" id="email" placeholder="Digite seu e-mail">
+        <input class="input-field" type="password" id="password" placeholder="Digite sua senha">
+        <button class="submit-btn" onclick="login()">Entrar</button>
+        <p id="error-message" class="error-message"></p>
+        <a onclick="showSignupForm()" class="switch-link">Não tem uma conta? Cadastre-se</a>
+    </div>
+
+    <!-- CADASTRO -->
+    <div id="signup-container" class="container fadeIn" style="display: none;">
+        <h2>Cadastro</h2>
+        <input class="input-field" type="email" id="signup-email" placeholder="Digite seu e-mail">
+        <input class="input-field" type="password" id="signup-password" placeholder="Digite sua senha">
+        <button class="submit-btn" onclick="signup()">Cadastrar</button>
+        <p id="signup-error-message" class="error-message"></p>
+        <a onclick="showLoginForm()" class="switch-link">Já tem uma conta? Faça login</a>
+    </div>
+
+</body>
+</html>
